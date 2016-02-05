@@ -24,6 +24,7 @@ class MakeMemeViewController: UIViewController, UIImagePickerControllerDelegate,
     
     var memeToBeEdited: Meme!
     
+    var imagePicker = UIImagePickerController()
     
     
     override func viewDidLoad() {
@@ -44,7 +45,7 @@ class MakeMemeViewController: UIViewController, UIImagePickerControllerDelegate,
         bottomTextField.textAlignment = .Center
         
        
-        
+        imagePicker.delegate = self
     }
     
     override func viewWillAppear(animated: Bool) {
@@ -56,7 +57,7 @@ class MakeMemeViewController: UIViewController, UIImagePickerControllerDelegate,
         cameraButton.enabled = UIImagePickerController.isSourceTypeAvailable(UIImagePickerControllerSourceType.Camera)
         
         if memeToBeEdited != nil {
-            imageView.contentMode = .ScaleAspectFit
+            
             imageView.image = memeToBeEdited.originalImage
             topTextField.text = memeToBeEdited.topString
             bottomTextField.text = memeToBeEdited.bottomString
@@ -81,8 +82,6 @@ class MakeMemeViewController: UIViewController, UIImagePickerControllerDelegate,
     
     @IBAction func pickImage(sender: AnyObject) {
         
-        let imagePicker = UIImagePickerController()
-        imagePicker.delegate = self
         imagePicker.sourceType = UIImagePickerControllerSourceType.PhotoLibrary
         presentViewController(imagePicker, animated: true, completion: nil)
 
@@ -90,8 +89,6 @@ class MakeMemeViewController: UIViewController, UIImagePickerControllerDelegate,
     
     @IBAction func takePic(sender: UIBarButtonItem) {
         
-        let imagePicker = UIImagePickerController()
-        imagePicker.delegate = self
         imagePicker.sourceType = UIImagePickerControllerSourceType.Camera
         presentViewController(imagePicker, animated: true, completion: nil)
         
@@ -102,7 +99,6 @@ class MakeMemeViewController: UIViewController, UIImagePickerControllerDelegate,
     func imagePickerController(picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [String : AnyObject]) {
 
             if let image = info[UIImagePickerControllerOriginalImage] as? UIImage {
-                imageView.contentMode = .ScaleAspectFit
                 imageView.image = image
                 shareButton.enabled = true
             }
