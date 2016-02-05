@@ -8,7 +8,7 @@
 
 import UIKit
 
-class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavigationControllerDelegate, UITextFieldDelegate {
+class MakeMemeViewController: UIViewController, UIImagePickerControllerDelegate, UINavigationControllerDelegate, UITextFieldDelegate {
     
     
     @IBOutlet weak var imageView: UIImageView!
@@ -22,15 +22,9 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
     
     @IBOutlet weak var shareButton: UIBarButtonItem!
     
+    var memeToBeEdited: Meme!
     
-    struct Meme {
     
-        let topString: String
-        let bottomString: String
-        let originalImage: UIImage
-        let memedImage: UIImage
-    
-    }
     
     override func viewDidLoad() {
         
@@ -49,6 +43,8 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
         bottomTextField.defaultTextAttributes = memeTextAttributes
         bottomTextField.textAlignment = .Center
         
+       
+        
     }
     
     override func viewWillAppear(animated: Bool) {
@@ -59,17 +55,29 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
         
         cameraButton.enabled = UIImagePickerController.isSourceTypeAvailable(UIImagePickerControllerSourceType.Camera)
         
+        if memeToBeEdited != nil {
+            imageView.contentMode = .ScaleAspectFit
+            imageView.image = memeToBeEdited.originalImage
+            topTextField.text = memeToBeEdited.topString
+            bottomTextField.text = memeToBeEdited.bottomString
+            
+        }
+        
         if imageView.image != nil {
             shareButton.enabled = true
         } else {
             shareButton.enabled = false
         }
+        
+        
     }
     
     override func viewWillDisappear(animated: Bool) {
         super.viewWillDisappear(animated)
         unsubscribeFromKeyboardNotifications()
     }
+    
+    
     
     @IBAction func pickImage(sender: AnyObject) {
         
@@ -186,12 +194,25 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
     
     func save(memedImage: UIImage) {
         
+        if topTextField.text?.isEmpty == true {
+            topTextField.text = "Top"
+        }
+        
+        if bottomTextField.text?.isEmpty == true {
+            bottomTextField.text = "Bottom"
+        }
+        
         let meme = Meme(topString: topTextField.text!, bottomString: bottomTextField.text!, originalImage: imageView.image!, memedImage: memedImage)
+        
+        let object = UIApplication.sharedApplication().delegate
+        let appDelegate = object as! AppDelegate
+        appDelegate.memes.append(meme)
+        dismissViewControllerAnimated(true, completion: nil)
     }
     
     override func prefersStatusBarHidden() -> Bool {
         return true
     }
-
+    
 }
 
